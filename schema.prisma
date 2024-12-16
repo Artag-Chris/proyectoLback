@@ -1,0 +1,67 @@
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  email      String   @unique
+  passwordHash String
+  firstName  String?
+  lastName   String?
+  address    String?
+  phoneNumber String?
+  createdAt  DateTime @default(now())
+  orders     Order[]
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  products    Product[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  stock       Int
+  createdAt   DateTime @default(now())
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+}
+model OrderStatus {
+  id     Int     @id @default(autoincrement())
+  status String  @unique
+  orders Order[]
+}
+
+model Order {
+  id            Int           @id @default(autoincrement())
+  totalAmount   Float
+  createdAt     DateTime      @default(now())
+  userId        Int
+  user          User          @relation(fields: [userId], references: [id])
+  orderStatusId Int
+  orderStatus   OrderStatus   @relation(fields: [orderStatusId], references: [id])
+  orderItems    OrderItem[]
+  transactions  Transaction[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  price     Float
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Transaction {
+  id              Int      @id @default(autoincrement())
+  amount          Float
+  transactionDate DateTime @default(now())
+  paymentMethod   String
+  orderId         Int
+  order           Order    @relation(fields: [orderId], references: [id])
+}
