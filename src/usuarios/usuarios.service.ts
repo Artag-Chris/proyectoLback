@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit, Param } from "@nestjs/common";
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -25,10 +25,12 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
 
   }
 
-  async getUsuario() {
+  async getUsuario(
+    phoneNumber: string
+  ) {
     //usa un try catch
     try {
-      const usuario = await this.user.findUnique({ where: { id: 1 } });
+      const usuario = await this.user.findUnique({ where: { phoneNumber } });
       return usuario;
     } catch (error) {
       this.logger.error(`Error getting user: ${error.message}`);
@@ -37,48 +39,54 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
 
   }
 
-  async createUsuario() {
+  async createUsuario(data: any) {
     try {
 
-    } catch (error) { }
+      const existeTelefono: any = await this.user.findUnique(
+        { where: { phoneNumber: data.phoneNumber } });
 
-    const existeTelefono: any = await this.user.findUnique(
-      { where: { phoneNumber: '123456789' } });
-
-    if (!existeTelefono) {
-      //aqui podriamos usar un dto
-      const nuevoUsuario = await this.user.create({
-        data: {
-          username: 'John Doe',
-          phoneNumber: '123456789',
-          email: 'johndoe@example.com',
-          passwordHash: '1234567890',
-          firstName: 'John',
-          lastName: 'Doe',
-        }
-      });
-      //aqui podria ir mas codigo si necesitamos antes del return
-      return nuevoUsuario;
-    } else {
-      return "El Usuario ya existe";
+      if (!existeTelefono) {
+        //aqui podriamos usar un dto
+        const nuevoUsuario = await this.user.create({
+          data: {
+            username: data.username,
+            phoneNumber: data.phoneNumber,
+            email: data.email,
+            passwordHash: data.passwordHash,
+            firstName: data.firstName,
+            lastName: data.lastName,
+          }
+        });
+        //aqui podria ir mas codigo si necesitamos antes del return
+        return nuevoUsuario;
+      } else {
+        return "El Usuario ya existe";
+      }
+    } catch (error) {
+      this.logger.error(`Error creating user: ${error.message}`);
+      throw new Error('Error creating user');
     }
+
+
   };
 
 
-  async updateUsuario() {
+
+
+  async updateUsuario(phoneNumber: string, data: any) {
     try {
-      const usuario = await this.user.findUnique({ where: { phoneNumber: '123456789' } });
+      const usuario = await this.user.findUnique({ where: { phoneNumber } });
       if (usuario) {
-        const updatedUsuario = 
-        await this.user.update({
+        const updatedUsuario = await this.user.update({
           where: { id: usuario.id },
           data: {
-            username: 'John Doe updated',
-            phoneNumber: '987654321',
-            email: 'johndoeupdated@example.com',
-            passwordHash: '0987654321',
-            firstName: 'John Updated',
-            lastName: 'Doe Updated',
+            username: data.username || "jhon",
+            phoneNumber: data.phoneNumber || "123456789",
+            email: data.email || "johndoe@example.com",
+            passwordHash: data.passwordHash || "1234567890",
+            firstName: data.firstName || "John",
+            lastName: data.lastName || "Doe",
+            isAvailable: data.isAvailable || true,
           }
         });
         return updatedUsuario;
@@ -86,28 +94,30 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
         return "El Usuario no existe";
       }
     } catch (error) {
-      this.logger.error(`Error updating user: ${error.message}`);
+      console.error(`Error updating user: ${error.message}`);
       throw new Error('Error updating user');
-     }
- 
+    }
   }
 
-  async deleteUsuario() {
-    //deberemos usar un softdelete aqui
-    //eliminar un usuario
+  async deleteUsuario(phoneNumber: string) {
     try {
-      const usuario = await this.user.findUnique({ where: { phoneNumber: '123456789' } });
+      const usuario = await this.user.findUnique({ where: { phoneNumber } });
       if (usuario) {
-        const deletedUsuario = await this.user.delete({ where: { id: usuario.id } });
+        const deletedUsuario = await this.user.update({
+          where: { id: usuario.id },
+          data: {
+            isAvailable: false, // Soft delete
+          }
+        });
         return deletedUsuario;
       } else {
         return "El Usuario no existe";
       }
     } catch (error) {
-      this.logger.error(`Error deleting user: ${error.message}`);
+      console.error(`Error deleting user: ${error.message}`);
       throw new Error('Error deleting user');
-     }
-
+    }
   }
+
 
 }

@@ -1,14 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
-
 
 datasource db {
   provider = "postgresql"
@@ -16,40 +9,45 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
-  email      String   @unique
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  email        String   @unique
   passwordHash String
-  firstName  String?
-  lastName   String?
-  address    String?
-  phoneNumber String? @unique
-  createdAt  DateTime @default(now())
-  orders     Order[]
+  firstName    String?
+  lastName     String?
+  address      String?
+  phoneNumber  String? @unique
+  createdAt    DateTime @default(now())
+  isAvailable  Boolean  @default(true)  // Campo para soft delete
+  orders       Order[]
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  description String?
-  products    Product[]
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  description  String?
+  isAvailable  Boolean  @default(true)  // Campo para soft delete
+  products     Product[]
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
-  stock       Int
-  createdAt   DateTime @default(now())
-  categoryId  Int
-  category    Category @relation(fields: [categoryId], references: [id])
-  orderItems  OrderItem[]
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
+  stock        Int
+  createdAt    DateTime @default(now())
+  isAvailable  Boolean  @default(true)  // Campo para soft delete
+  categoryId   Int
+  category     Category @relation(fields: [categoryId], references: [id])
+  orderItems   OrderItem[]
 }
+
 model OrderStatus {
-  id     Int     @id @default(autoincrement())
-  status String  @unique
-  orders Order[]
+  id          Int      @id @default(autoincrement())
+  status      String   @unique
+  isAvailable Boolean  @default(true)  // Campo para soft delete
+  orders      Order[]
 }
 
 model Order {
@@ -60,18 +58,20 @@ model Order {
   user          User          @relation(fields: [userId], references: [id])
   orderStatusId Int
   orderStatus   OrderStatus   @relation(fields: [orderStatusId], references: [id])
+  isAvailable   Boolean       @default(true)  // Campo para soft delete
   orderItems    OrderItem[]
   transactions  Transaction[]
 }
 
 model OrderItem {
-  id        Int     @id @default(autoincrement())
-  quantity  Int
-  price     Float
-  orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id])
-  productId Int
-  product   Product @relation(fields: [productId], references: [id])
+  id           Int     @id @default(autoincrement())
+  quantity     Int
+  price        Float
+  orderId      Int
+  order        Order   @relation(fields: [orderId], references: [id])
+  productId    Int
+  product      Product @relation(fields: [productId], references: [id])
+  isAvailable  Boolean @default(true)  // Campo para soft delete
 }
 
 model Transaction {
@@ -81,5 +81,5 @@ model Transaction {
   paymentMethod   String
   orderId         Int
   order           Order    @relation(fields: [orderId], references: [id])
+  isAvailable     Boolean  @default(true)  // Campo para soft delete
 }
-

@@ -1,5 +1,6 @@
-import { Controller, Delete, Get, Logger, Post, Put } from "@nestjs/common";
+import { Body, Controller, Get, Logger, Param, Post, Put } from "@nestjs/common";
 import { UsuariosService } from "./usuarios.service";
+
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -23,28 +24,34 @@ export class UsuariosController {
     }
     @Get('/cliente/:id')
 
-    getUsuario() {
+    getUsuario(
+        @Param('phone') phoneNumber: string,
+    ) {
 
-        const respuesta = this.usuariosService.getUsuario();
+        const respuesta = this.usuariosService.getUsuario(phoneNumber);
         return respuesta;
     }
     @Post('/cliente')
 
-    createUsuario() {
-        const respuesta = this.usuariosService.createUsuario();
+    createUsuario(
+        @Body()
+        data: any,  // Este es un objeto con los datos del cliente a crear, podría ser un DTO (Data Transfer Object)
+    ) {
+        const respuesta = this.usuariosService.createUsuario(data);
         return respuesta;
     }
-    @Put('/cliente/:id')
-
-    updateUsuario() {
-        const respuesta = this.usuariosService.updateUsuario();
+    @Put('/cliente/:phone')
+    updateUsuario( phoneNumber: string, data: any) {
+        const respuesta = this.usuariosService.updateUsuario(phoneNumber, data);
         return respuesta;
     }
-    @Delete('/cliente/:id')
-
-    deleteUsuario() {
-        const respuesta = this.usuariosService.deleteUsuario();
+    @Put('/clienteborrar/:phone')
+    deleteUsuario( phoneNumber: string
+    ) {
+        const respuesta = this.usuariosService.deleteUsuario(phoneNumber);
         return respuesta;
     }
 
 }
+
+
