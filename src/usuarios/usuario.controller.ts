@@ -1,45 +1,48 @@
-import { Controller,Delete,Get, Logger, Post, Put } from "@nestjs/common";
+import { Controller, Delete, Get, Logger, Post, Put } from "@nestjs/common";
 import { UsuariosService } from "./usuarios.service";
 
 @Controller('usuarios')
 export class UsuariosController {
-constructor(
-private readonly usuariosService: UsuariosService
-){
-    const logger = new Logger('UsuariosController');
+    /***************************************************** 
+    Controlador de usuarios todo lo referente a manejo de usuarios
     
-}
+    ******************************************************/
+    constructor(
+        private readonly usuariosService: UsuariosService
+    ) {
+        const logger = new Logger('UsuariosController');
 
+    }
 
     @Get('/clientes')
 
-    getUsuarios(){
-        
-       const respuesta = this.usuariosService.getUsuarios();
+    getUsuarios() {
+
+        const respuesta = this.usuariosService.getUsuarios();
         return "getUsuarios";
-    }  
+    }
     @Get('/cliente/:id')
 
-    getUsuario(){
-    
-       const respuesta = this.usuariosService.getUsuario();
+    getUsuario() {
+
+        const respuesta = this.usuariosService.getUsuario();
         return respuesta;
     }
     @Post('/cliente')
 
-    createUsuario(){
+    createUsuario() {
         const respuesta = this.usuariosService.createUsuario();
         return respuesta;
     }
     @Put('/cliente/:id')
 
-    updateUsuario(){
+    updateUsuario() {
         const respuesta = this.usuariosService.updateUsuario();
         return respuesta;
     }
     @Delete('/cliente/:id')
 
-    deleteUsuario(){
+    deleteUsuario() {
         const respuesta = this.usuariosService.deleteUsuario();
         return respuesta;
     }

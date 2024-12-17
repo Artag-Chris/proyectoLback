@@ -9,7 +9,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
 
   onModuleInit() {
     this.$connect();
-    this.logger.log('conectado a la base de datos');
+    this.logger.log('conectado a la base de datos de Usuarios');
   }
 
 
@@ -93,6 +93,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
   }
 
   async deleteUsuario() {
+    //deberemos usar un softdelete aqui
     //eliminar un usuario
     try {
       const usuario = await this.user.findUnique({ where: { phoneNumber: '123456789' } });
