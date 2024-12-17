@@ -41,12 +41,15 @@ export class UsuariosController {
         return respuesta;
     }
     @Put('/cliente/:phone')
-    updateUsuario( phoneNumber: string, data: any) {
+    updateUsuario(
+        @Param('phone')
+        phoneNumber: string, data: any) {
         const respuesta = this.usuariosService.updateUsuario(phoneNumber, data);
         return respuesta;
     }
     @Put('/clienteborrar/:phone')
-    deleteUsuario( phoneNumber: string
+    deleteUsuario(
+        @Param('phone') phoneNumber: string
     ) {
         const respuesta = this.usuariosService.deleteUsuario(phoneNumber);
         return respuesta;
