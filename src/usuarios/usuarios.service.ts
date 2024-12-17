@@ -9,7 +9,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
 
   onModuleInit() {
     this.$connect();
-    this.logger.log('Database connected');
+    this.logger.log('conectado a la base de datos');
   }
 
 
@@ -22,7 +22,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       this.logger.error(`Error getting users: ${error.message}`);
       throw new Error('Error getting users');
     }
-   
+
   }
 
   async getUsuario() {
@@ -34,26 +34,79 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       this.logger.error(`Error getting user: ${error.message}`);
       throw new Error('Error getting user');
     }
-    
+
   }
 
   async createUsuario() {
-    /* crea un nuevo usuario en la base de datos */
+    try {
 
-    return "createUsuario";
-  }
+    } catch (error) { }
+
+    const existeTelefono: any = await this.user.findUnique(
+      { where: { phoneNumber: '123456789' } });
+
+    if (!existeTelefono) {
+      //aqui podriamos usar un dto
+      const nuevoUsuario = await this.user.create({
+        data: {
+          username: 'John Doe',
+          phoneNumber: '123456789',
+          email: 'johndoe@example.com',
+          passwordHash: '1234567890',
+          firstName: 'John',
+          lastName: 'Doe',
+        }
+      });
+      //aqui podria ir mas codigo si necesitamos antes del return
+      return nuevoUsuario;
+    } else {
+      return "El Usuario ya existe";
+    }
+  };
+
+
   async updateUsuario() {
-    /* actualiza un usuario en la base de datos */  
-
-    return "updateUsuario";
+    try {
+      const usuario = await this.user.findUnique({ where: { phoneNumber: '123456789' } });
+      if (usuario) {
+        const updatedUsuario = 
+        await this.user.update({
+          where: { id: usuario.id },
+          data: {
+            username: 'John Doe updated',
+            phoneNumber: '987654321',
+            email: 'johndoeupdated@example.com',
+            passwordHash: '0987654321',
+            firstName: 'John Updated',
+            lastName: 'Doe Updated',
+          }
+        });
+        return updatedUsuario;
+      } else {
+        return "El Usuario no existe";
+      }
+    } catch (error) {
+      this.logger.error(`Error updating user: ${error.message}`);
+      throw new Error('Error updating user');
+     }
+ 
   }
 
   async deleteUsuario() {
-    /* elimina un usuario de la base de datos */  
+    //eliminar un usuario
+    try {
+      const usuario = await this.user.findUnique({ where: { phoneNumber: '123456789' } });
+      if (usuario) {
+        const deletedUsuario = await this.user.delete({ where: { id: usuario.id } });
+        return deletedUsuario;
+      } else {
+        return "El Usuario no existe";
+      }
+    } catch (error) {
+      this.logger.error(`Error deleting user: ${error.message}`);
+      throw new Error('Error deleting user');
+     }
 
-    return "deleteUsuario";
   }
-
-  
 
 }

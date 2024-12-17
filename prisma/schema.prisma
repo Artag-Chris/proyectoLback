@@ -23,7 +23,7 @@ model User {
   firstName  String?
   lastName   String?
   address    String?
-  phoneNumber String?
+  phoneNumber String? @unique
   createdAt  DateTime @default(now())
   orders     Order[]
 }
