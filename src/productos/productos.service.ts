@@ -12,9 +12,8 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
         this.logger.log('conectado a la base de datos de productos');
     }
     getAllProductos() {
-
-
-        return "getProductos";
+        const productos = this.product.findMany();
+        return productos;
     }
 
     async createCategory() {
