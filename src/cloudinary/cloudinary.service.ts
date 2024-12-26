@@ -6,7 +6,17 @@ import { CloudinaryResponse } from './cloudinaryResponse';
 
 @Injectable()
 export class CloudinaryService {
+
+  /*******************************************************************
+    clase para guardar imagenes en cloudinary usa multer para ayudar
+    a subir archivos y cloudinary para subir a la nube
+   ********************************************************************/
+
+
+
+
   constructor() {
+    // Configuration de cloudinary
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -14,7 +24,7 @@ export class CloudinaryService {
     });
   }
 
- 
+ //sube imagen a cloudinary
 async uploadImage(file: Express.Multer.File): Promise<  CloudinaryResponse > {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -23,7 +33,7 @@ async uploadImage(file: Express.Multer.File): Promise<  CloudinaryResponse > {
         if (error) {
           reject(error);
         } else {
-          console.log(result.secure_url );
+          
           resolve(result);
         }
       }

@@ -25,19 +25,22 @@ export class ProductosController {
     }
 
     @Post('/upload')
-  @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file'))
     async uploadImage(
         @UploadedFile(
-        new ParseFilePipe({
-        validators: [
-            new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4}),
-            new FileTypeValidator({fileType:'.(png|jpeg|jpg)'  })
-        ]
-    })
-) file: Express.Multer.File
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+                    new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+                ]
+            })
+        ) file: Express.Multer.File
 
-) {
-    
+    ) {
+            //aqui antes de solo subir la imagen debere esperar la respuesta
+            //de la subida de la imagen a cloudinary
+            //y luego guardar la url de la imagen en la base de datos
+            //con los demas datos del producto
         const result = await this.cloudinaryService.uploadImage(file);
         return result;
     }
