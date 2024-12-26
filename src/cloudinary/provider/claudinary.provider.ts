@@ -16,6 +16,7 @@ export class CloudinaryProvider {
             const uploadResult = await cloudinary.uploader.upload(imageUrl, {
                 public_id: publicId,
             });
+            console.log('Image uploaded to cloudinary');
             console.log(uploadResult);
             return uploadResult;
         } catch (error) {
@@ -45,14 +46,3 @@ export class CloudinaryProvider {
     }
 }
 
-(async function() {
-    const cloudinaryProvider = new CloudinaryProvider();
-
-    const uploadResult = await cloudinaryProvider.uploadImage(
-        'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg',
-        'shoes'
-    );
-
-    const optimizeUrl = cloudinaryProvider.getOptimizedUrl('shoes');
-    const autoCropUrl = cloudinaryProvider.getAutoCropUrl('shoes', 500, 500);
-})();

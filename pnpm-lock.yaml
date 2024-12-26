@@ -20,6 +20,12 @@ importers:
       '@prisma/client':
         specifier: ^6.1.0
         version: 6.1.0(prisma@6.1.0)
+      '@types/body-parser':
+        specifier: ^1.19.5
+        version: 1.19.5
+      body-parser:
+        specifier: ^1.20.3
+        version: 1.20.3
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -75,6 +81,9 @@ importers:
       '@types/node':
         specifier: ^20.17.10
         version: 20.17.10
+      '@types/qs':
+        specifier: ^6.9.17
+        version: 6.9.17
       '@types/streamifier':
         specifier: ^0.1.2
         version: 0.1.2
