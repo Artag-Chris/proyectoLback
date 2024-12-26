@@ -1,43 +1,58 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { envs } from 'src/config';
 
-(async function() {
+export class CloudinaryProvider {
+    constructor() {
+        // Configuration
+        cloudinary.config({ 
+            cloud_name: envs.cloudinaryName, 
+            api_key: envs.cloudinaryApiKey,
+            api_secret: envs.cloudinarySecret
+        });
+    }
 
-    // Configuration
-    cloudinary.config({ 
-        cloud_name: envs.cloudinaryName, 
-        api_key: envs.cloudinaryApiKey,
-        api_secret: envs.cloudinarySecret // Click 'View API Keys' above to copy your API secret
-    });
-    
-    // Upload an image
-     const uploadResult = await cloudinary.uploader
-       .upload(
-           'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
-               public_id: 'shoes',
-           }
-       )
-       .catch((error) => {
-           console.log(error);
-       });
-    
-    console.log(uploadResult);
-    
-    // Optimize delivery by resizing and applying auto-format and auto-quality
-    const optimizeUrl = cloudinary.url('shoes', {
-        fetch_format: 'auto',
-        quality: 'auto'
-    });
-    
-    console.log(optimizeUrl);
-    
-    // Transform the image: auto-crop to square aspect_ratio
-    const autoCropUrl = cloudinary.url('shoes', {
-        crop: 'auto',
-        gravity: 'auto',
-        width: 500,
-        height: 500,
-    });
-    
-    console.log(autoCropUrl);    
+    async uploadImage(imageUrl: string, publicId: string) {
+        try {
+            const uploadResult = await cloudinary.uploader.upload(imageUrl, {
+                public_id: publicId,
+            });
+            console.log(uploadResult);
+            return uploadResult;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    getOptimizedUrl(publicId: string) {
+        const optimizeUrl = cloudinary.url(publicId, {
+            fetch_format: 'auto',
+            quality: 'auto'
+        });
+        console.log(optimizeUrl);
+        return optimizeUrl;
+    }
+
+    getAutoCropUrl(publicId: string, width: number, height: number) {
+        const autoCropUrl = cloudinary.url(publicId, {
+            crop: 'auto',
+            gravity: 'auto',
+            width,
+            height,
+        });
+        console.log(autoCropUrl);
+        return autoCropUrl;
+    }
+}
+
+(async function() {
+    const cloudinaryProvider = new CloudinaryProvider();
+
+    const uploadResult = await cloudinaryProvider.uploadImage(
+        'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg',
+        'shoes'
+    );
+
+    const optimizeUrl = cloudinaryProvider.getOptimizedUrl('shoes');
+    const autoCropUrl = cloudinaryProvider.getAutoCropUrl('shoes', 500, 500);
 })();
