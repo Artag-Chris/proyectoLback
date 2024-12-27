@@ -1,27 +1,25 @@
-FROM node:22
+# Usa una imagen base de Node.js en su versión 21-alpine3.19
+FROM node:21-alpine3.19
 
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /usr/src/app
 
-# Copiar los archivos de paquete
+# Copia el archivo package.json y pnpm-lock.yaml al directorio de trabajo
 COPY package.json ./
-COPY package-lock.json ./
+COPY pnpm-lock.yaml ./
 
-# Instalar dependencias y Prisma CLI
-RUN npm install
-RUN npm install -g typescript
-RUN npm install -g prisma
+# Instala pnpm y las dependencias del proyecto
+# Nota: Añadimos la instalación de pnpm globalmente antes de usarlo para instalar dependencias
+RUN npm install -g pnpm && pnpm install
 
-# Copiar el resto del código
+# Copia el resto de los archivos del proyecto al directorio de trabajo
 COPY . .
-
-# Compilar TypeScript
-RUN npm run build
 
 # Generar Prisma Client
 RUN prisma generate
 
-# Exponer el puerto de la aplicación
-EXPOSE 15037
+# Expone el puerto 35715
+EXPOSE 45623
 
-# Ejecutar migraciones de Prisma y levantar la aplicación en modo producción
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+# Comando por defecto para ejecutar la aplicación (asegúrate de modificarlo según sea necesario)
+#CMD ["npm", "start"]
