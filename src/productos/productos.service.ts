@@ -6,15 +6,14 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     /*******************************************************************
     Clase de productos que maneja tambien categorias para el microservice 
     *******************************************************************/
+    private readonly prisma = new PrismaClient();
     private readonly logger = new Logger('ProductosService');
+
     onModuleInit() {
         this.$connect();
         this.logger.log('conectado a la base de datos de productos');
     }
-    getAllProductos() {
-        const productos = this.product.findMany();
-        return productos;
-    }
+
 
     async createCategory() {
         try {
@@ -31,6 +30,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
             throw new Error('Error creating category');
         }
     }
+    /*
     async updateCategory() {
         try {
             const categoria = await this.category.findUnique({ where: { name: 'Nueva Categoria' } });
@@ -52,7 +52,8 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
             throw new Error('Error updating category');
         }
     }
-
+*/
+/*
     async deleteCategory() {
         //softdelete category
         try {
@@ -68,13 +69,89 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
             throw new Error('Error deleting category');
         }
     }
+*/
+    async createProducto(data: any) {
+        const categoria = await this.findCategoryByName(data.category);
+        if (!categoria) {
+           let categoria = await this.findOrCreateCategoryByName(data.category, 'Default description');
+            let producto = await this.prisma.product.create({
+                data: {
+                  name: data.name,
+                  description: data.description,
+                  price: data.price,
+                  stock: data.stock,
+                  categoryId: categoria.id,
+                  imageUrl: data.imageUrl,
+                },
+              });
+              return producto;
+        }
+    
+        return this.prisma.product.create({
+          data: {
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            stock: data.stock,
+            categoryId: categoria.id,
+            imageUrl: data.imageUrl,
+          },
+        });
+      }
+    async getAllProductos() {
+        try {
+            const productos = await this.product.findMany();
+            return productos;
+        } catch (error) {
+            this.logger.error(`Error fetching products: ${error.message}`);
+            throw new Error('Error fetching products');
+        }
 
-    async createProducto(data: {
-         name: string, description: string, price: number, imageUrl: string,
-          category: string, desCategory: string }) {
-    console.log(`aquiiiiiiii`);
-    console.log(data);
-    return data
+}
+async findCategoryByName(name: string) {
+    return this.prisma.category.findFirst({
+      where: { name },
+    });
+  }
+async findOrCreateCategoryByName(name: string, description: string) {
+    let categoria = await this.prisma.category.findFirst({
+        where: { name },
+    });
+
+    if (!categoria) {
+        categoria = await this.prisma.category.create({
+            data: {
+                name,
+                description,
+            },
+        });
+        this.logger.log(`Created new category: ${name}`);
     }
 
+    return categoria;
+}
+async createProductoWithCategory(data: any) {
+    let categoria = await this.findCategoryByName(data.category);
+
+    if (!categoria) {
+        categoria = await this.prisma.category.create({
+            data: {
+                name: data.category,
+                description: 'Default description', // Puedes cambiar esto según tus necesidades
+            },
+        });
+        this.logger.log(`Created new category: ${data.category}`);
+    }
+
+    return this.prisma.product.create({
+        data: {
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            stock: data.stock,
+            categoryId: categoria.id,
+            imageUrl: data.imageUrl,
+        },
+    });
+}
 }

@@ -43,12 +43,16 @@ export class ProductosController {
         //con los demas datos del producto
         const result = await this.cloudinaryService.uploadImage(file);
         // Aquí puedes acceder a otros parámetros recibidos en el cuerpo de la solicitud
-        const { name,description, price,category, desCategory } = body;
+        const { name, description, price, category, desCategory, stock } = body;
+        // Parsear price y stock a número
+        const parsedPrice = parseFloat(price);
+        const parsedStock = parseInt(stock, 10);
         // Guardar la URL de la imagen y otros datos en la base de datos
         const producto = await this.productosService.createProducto({
             name,
             description,
-            price,
+            price: parsedPrice,
+            stock: parsedStock,
             imageUrl: result.secure_url,
             category,
             desCategory

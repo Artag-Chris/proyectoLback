@@ -23,24 +23,24 @@ model User {
 }
 
 model Category {
-  id           Int      @id @default(autoincrement())
-  name         String   @unique
-  description  String?
-  isAvailable  Boolean  @default(true)  // Campo para soft delete
-  products     Product[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  isAvailable Boolean   @default(true)
+  products    Product[] // Add this line to create the opposite relation field
 }
 
 model Product {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   name         String
   description  String?
   price        Float
   stock        Int
-  createdAt    DateTime @default(now())
-  isAvailable  Boolean  @default(true)  // Campo para soft delete
+  createdAt    DateTime  @default(now())
+  isAvailable  Boolean   @default(true)  // Campo para soft delete
   categoryId   Int
   imageUrl     String?
-  category     Category @relation(fields: [categoryId], references: [id])
+  category     Category  @relation(fields: [categoryId], references: [id])
   orderItems   OrderItem[]
 }
 

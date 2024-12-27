@@ -11,6 +11,8 @@ COPY pnpm-lock.yaml ./
 # Instala pnpm y las dependencias del proyecto
 # Nota: Añadimos la instalación de pnpm globalmente antes de usarlo para instalar dependencias
 RUN npm install -g pnpm && pnpm install
+RUN npm install -g prisma
+
 
 # Copia el resto de los archivos del proyecto al directorio de trabajo
 COPY . .
