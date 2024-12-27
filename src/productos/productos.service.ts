@@ -4,7 +4,10 @@ import { PrismaClient } from "@prisma/client";
 @Injectable()
 export class ProductosService extends PrismaClient implements OnModuleInit {
     /*******************************************************************
-    Clase de productos que maneja tambien categorias para el microservice 
+    Clase de productos que maneja tambien categorias 
+    devolvera productos y categorias tambien tendra metodos 
+    que pediran datos de forma especifica como productos vendidos por meses
+    o los nuevos productos agregados los 6 ultimos productos
     *******************************************************************/
     private readonly prisma = new PrismaClient();
     private readonly logger = new Logger('ProductosService');
