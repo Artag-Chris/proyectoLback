@@ -69,4 +69,12 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
         }
     }
 
+    async createProducto(data: {
+         name: string, description: string, price: number, imageUrl: string,
+          category: string, desCategory: string }) {
+    console.log(`aquiiiiiiii`);
+    console.log(data);
+    return data
+    }
+
 }
