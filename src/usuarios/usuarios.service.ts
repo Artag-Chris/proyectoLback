@@ -118,6 +118,8 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error deleting user');
     }
   }
-
+ async socialLogin(userData: any) { 
+  console.log(userData);
+ }
 
 }

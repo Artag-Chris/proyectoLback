@@ -19,6 +19,7 @@ model User {
   phoneNumber  String? @unique
   createdAt    DateTime @default(now())
   isAvailable  Boolean  @default(true)  // Campo para soft delete
+  isAdmin      Boolean  @default(false) // Campo para definir si es administrador
   orders       Order[]
 }
 

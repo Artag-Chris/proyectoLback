@@ -54,6 +54,14 @@ export class UsuariosController {
         const respuesta = this.usuariosService.deleteUsuario(phoneNumber);
         return respuesta;
     }
+    @Post('/sociallogin')
+    socialLogin(
+        @Body()
+        userData: any,  // Este es un objeto con los datos del cliente a crear, podría ser un DTO (Data Transfer Object)
+    ) {
+        const respuesta = this.usuariosService.socialLogin(userData);
+        return respuesta;
+    }
 
 }
 
