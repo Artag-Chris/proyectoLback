@@ -10,13 +10,13 @@ datasource db {
 
 model User {
   id           Int      @id @default(autoincrement())
-  username     String   @unique
+  username     String   
   email        String   @unique
-  passwordHash String
+  passwordHash String?  // Hacer que el campo sea opcional
   firstName    String?
   lastName     String?
   address      String?
-  phoneNumber  String? @unique
+  phoneNumber  String?  @unique
   createdAt    DateTime @default(now())
   isAvailable  Boolean  @default(true)  // Campo para soft delete
   isAdmin      Boolean  @default(false) // Campo para definir si es administrador
