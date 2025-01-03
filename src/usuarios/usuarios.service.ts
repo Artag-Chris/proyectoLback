@@ -42,14 +42,14 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
   async createUsuario(data: any) {
     try {
 
-      const existeTelefono: any = await this.user.findUnique(
-        { where: { phoneNumber: data.phoneNumber } });
+      const existeEmail: any = await this.user.findUnique(
+        { where: { email: data.email } });
 
-      if (!existeTelefono) {
+      if (!existeEmail) {
         //aqui podriamos usar un dto
         const nuevoUsuario = await this.user.create({
           data: {
-            username: data.username,
+           
             phoneNumber: data.phoneNumber,
             email: data.email,
             passwordHash: data.passwordHash,
@@ -80,7 +80,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
         const updatedUsuario = await this.user.update({
           where: { id: usuario.id },
           data: {
-            username: data.username || "jhon",
+            
             phoneNumber: data.phoneNumber || "123456789",
             email: data.email || "johndoe@example.com",
             passwordHash: data.passwordHash || "1234567890",
@@ -118,8 +118,34 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error deleting user');
     }
   }
- async socialLogin(userData: any) { 
-  console.log(userData);
- }
+  async socialLogin(userData: { provider: string; userData: { name: string; email: string; image: string } }) {
+  
+    try {
+      const { email, name } = userData.userData;
+
+      // Check if user already exists
+      const existingUser = await this.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        return { message: 'User already exists', user: existingUser };
+      }
+
+      // Create new user
+      const newUser = await this.createUsuario({
+        username: name,
+        email,
+        passwordHash: null, // No password for social login
+        firstName: name.split(' ')[0],
+        lastName: name.split(' ').slice(1).join(' '),
+      });
+
+      return { message: 'User created successfully', user: newUser };
+    } catch (error) {
+      this.logger.error(`Error in social login: ${error.message}`);
+      throw new Error('Error in social login');
+    }
+  }
 
 }
