@@ -20,7 +20,7 @@ export class UsuariosController {
     getUsuarios() {
 
         const respuesta = this.usuariosService.getUsuarios();
-        return "getUsuarios";
+        return respuesta;
     }
     @Get('/cliente/:id')
 
@@ -59,6 +59,7 @@ export class UsuariosController {
         @Body()
         userData: any,  // Este es un objeto con los datos del cliente a crear, podría ser un DTO (Data Transfer Object)
     ) {
+        
         const respuesta = this.usuariosService.socialLogin(userData);
         return respuesta;
     }
