@@ -22,13 +22,13 @@ export class UsuariosController {
         const respuesta = this.usuariosService.getUsuarios();
         return respuesta;
     }
-    @Get('/cliente/:id')
+    @Get('/cliente/:email')
 
     getUsuario(
-        @Param('phone') phoneNumber: string,
+        @Param('email') email: string,
     ) {
 
-        const respuesta = this.usuariosService.getUsuario(phoneNumber);
+        const respuesta = this.usuariosService.getUsuario(email);
         return respuesta;
     }
     @Post('/cliente')
@@ -40,9 +40,9 @@ export class UsuariosController {
         const respuesta = this.usuariosService.createUsuario(data);
         return respuesta;
     }
-    @Put('/cliente/:phone')
+    @Put('/cliente/:email')
     updateUsuario(
-        @Param('phone')
+        @Param('email')
         phoneNumber: string, data: any) {
         const respuesta = this.usuariosService.updateUsuario(phoneNumber, data);
         return respuesta;

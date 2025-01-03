@@ -27,11 +27,11 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
   }
 
   async getUsuario(
-    phoneNumber: string
+    email: string
   ) {
     //usa un try catch
     try {
-      const usuario = await this.user.findUnique({ where: { phoneNumber } });
+      const usuario = await this.user.findUnique({ where: { email } });
       return usuario;
     } catch (error) {
       this.logger.error(`Error getting user: ${error.message}`);
@@ -41,6 +41,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
   }
 
   async createUsuario(data: any) {
+    
     try {
 
       const existeEmail: any = await this.user.findUnique(
@@ -61,7 +62,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
         //aqui podria ir mas codigo si necesitamos antes del return
         return nuevoUsuario;
       } else {
-        return "El Usuario ya existe";
+        return "ski";
       }
     } catch (error) {
       this.logger.error(`Error creating user: ${error.message}`);
@@ -117,10 +118,9 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     }
   }
   async socialLogin(userData: any) {
+    const { email, name } = userData.userData;
   
     try {
-      const { email, name } = userData;
-
       // Check if user already exists
       const existingUser = await this.user.findUnique({
         where: { email },
@@ -128,7 +128,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       
       if (existingUser) {
         
-        return { message: 'User already exists', user: existingUser };
+        return existingUser;
       }
 
       // Create new user
