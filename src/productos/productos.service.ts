@@ -33,6 +33,16 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
             throw new Error('Error creating category');
         }
     }
+
+    async getAllCategories() {
+        try {
+            const categorias = await this.category.findMany();
+            return categorias;
+        } catch (error) {
+            this.logger.error(`Error fetching categories: ${error.message}`);
+            throw new Error('Error fetching categories');
+        }
+    }
     /*
     async updateCategory() {
         try {

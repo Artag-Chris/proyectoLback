@@ -118,7 +118,8 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     }
   }
   async socialLogin(userData: any) {
-    const { email, name } = userData.userData;
+    
+    const { email, name } = userData;
   
     try {
       // Check if user already exists

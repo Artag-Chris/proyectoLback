@@ -18,6 +18,11 @@ export class ProductosController {
         const respuesta = this.productosService.getAllProductos();
         return respuesta;
     }
+    @Get('/categorias')
+    getAllCategories() {
+        const respuesta = this.productosService.getAllCategories();
+        return respuesta;
+    }
 
     @Get(`/:id`)
     getProductos() {
