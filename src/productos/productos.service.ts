@@ -170,4 +170,23 @@ async createProductoWithCategory(data: any) {
         },
     });
 }
+async findProductById(id: number) {
+   
+    try {
+        const producto = await this.prisma.product.findUnique({
+            where: { id },
+        });
+
+        if (!producto) {
+            throw new Error('Product not found');
+        }
+
+        return producto;
+    } catch (error) {
+        this.logger.error(`Error fetching product by id: ${error.message}`);
+        throw new Error('Error fetching product by id');
+    }
+
+}
+
 }

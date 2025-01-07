@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { Express } from 'express';
 import { Multer } from 'multer';
 import { ProductosService } from "./productos.service";
@@ -26,9 +26,11 @@ export class ProductosController {
         return respuesta;
     }
 
-    @Get(`/:id`)
-    getProductos() {
-        return "getProducto";
+    @Get('/:id')
+    getProductos(@Param('id') id: string) {
+        const parsedId = parseInt(id, 10);
+        const respuesta = this.productosService.findProductById(parsedId);
+        return respuesta;
     }
 
     @Post('/upload')
