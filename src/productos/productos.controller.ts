@@ -16,8 +16,10 @@ export class ProductosController {
     @Get('/')
     getAllProductos() {
         const respuesta = this.productosService.getAllProductos();
+        //aqui se devuleve un objeto con dos arrays uno llamado product y el otro soldProduct
         return respuesta;
     }
+    
     @Get('/categorias')
     getAllCategories() {
         const respuesta = this.productosService.getAllCategories();

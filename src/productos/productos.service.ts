@@ -37,7 +37,8 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     async getAllCategories() {
         try {
             const categorias = await this.category.findMany();
-            return categorias;
+            
+            return  {"categories":[...categorias]}
         } catch (error) {
             this.logger.error(`Error fetching categories: ${error.message}`);
             throw new Error('Error fetching categories');
@@ -112,9 +113,11 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
         });
       }
     async getAllProductos() {
+        //este metodo por ahora devuelve los productos y los soldProducts pero planeo que
+        //filtre los productos por ultimos vendidos y  por los que se quieran mostrar de  primeros  por ahora se dejaran asi
         try {
             const productos = await this.product.findMany();
-            return productos;
+            return {"product":[...productos],"soldProducts":[...productos]}
         } catch (error) {
             this.logger.error(`Error fetching products: ${error.message}`);
             throw new Error('Error fetching products');
