@@ -17,7 +17,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
 
     try {
       const usuarios = await this.user.findMany();
-      console.log(usuarios);
+      //console.log(usuarios);
       return usuarios;
     } catch (error) {
       this.logger.error(`Error getting users: ${error.message}`);

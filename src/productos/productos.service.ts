@@ -124,6 +124,20 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
         }
 
 }
+async getLastSixProductos() {
+    try {
+        const productos = await this.product.findMany({
+            orderBy: {
+                createdAt: 'desc',
+            },
+            take: 6,
+        });
+        return productos;
+    } catch (error) {
+        this.logger.error(`Error fetching last six products: ${error.message}`);
+        throw new Error('Error fetching last six products');
+    }
+}
 async findCategoryByName(name: string) {
     return this.prisma.category.findFirst({
       where: { name },
