@@ -42,9 +42,10 @@ export class UsuariosController {
     }
     @Put('/cliente/:email')
     updateUsuario(
-        @Param('email')
-        phoneNumber: string, data: any) {
-        const respuesta = this.usuariosService.updateUsuario(phoneNumber, data);
+        @Param('email') email: string,
+        @Body() data: any) {
+            console.log(data)
+        const respuesta = this.usuariosService.updateUsuario(email, data);
         return respuesta;
     }
     @Put('/clienteborrar/:phone')

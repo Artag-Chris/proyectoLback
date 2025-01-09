@@ -72,19 +72,18 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
 
   };
 
-  async updateUsuario(phoneNumber: string, data: any) {
+  async updateUsuario(email: string, data: any) {
+    
     try {
-      const usuario = await this.user.findUnique({ where: { phoneNumber } });
+      const usuario = await this.user.findUnique({ where: { email } });
       if (usuario) {
         const updatedUsuario = await this.user.update({
           where: { id: usuario.id },
           data: {
-            
-            phoneNumber: data.phoneNumber || "123456789",
-            email: data.email || "johndoe@example.com",
-            passwordHash: data.passwordHash || "1234567890",
-            firstName: data.firstName || "John",
-            lastName: data.lastName || "Doe",
+            phoneNumber: data.phone,
+            address  :data.address,
+            firstName: data.firstName ,
+            lastName: data.lastName ,
             isAvailable: data.isAvailable || true,
           }
         });
@@ -96,6 +95,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       console.error(`Error updating user: ${error.message}`);
       throw new Error('Error updating user');
     }
+      
   }
 
   async deleteUsuario(phoneNumber: string) {
