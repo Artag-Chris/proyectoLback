@@ -19,6 +19,11 @@ export class ProductosController {
         //aqui se devuleve un objeto con dos arrays uno llamado product y el otro soldProduct
         return respuesta;
     }
+    @Get('/latest')
+    getLatestProductos() {
+        const respuesta = this.productosService.getLastSixProductos;
+        return respuesta;
+    }
     
     @Get('/categorias')
     getAllCategories() {
