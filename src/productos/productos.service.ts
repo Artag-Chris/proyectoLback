@@ -18,20 +18,39 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     }
 
 
-    async createCategory() {
+    async createCategory( category: any) {
+        console.log(category)
+            
+        //validar que la categoria no exista ya
         try {
-            const nuevaCategoria = await this.category.create({
-                data: {
-                    name: 'Nueva Categoria',
-                    description: 'Nueva Categoria'
+            const existe = await this.category.findFirst(
+                {
+                    where: {
+                        name: category.name,
+                    }
                 }
-            });
-            //aqui podria ir mas codigo si necesitamos antes del return
-            return nuevaCategoria;
+            );
+            if (existe) {
+                return {
+                    message: 'La categoria ya existe',
+                }
+            }else{
+                const nuevaCategoria = await this.category.create({
+                    data: {
+                        name: category.name,
+                        description: category.description,
+                    }
+                });
+                //aqui podria ir mas codigo si necesitamos antes del return
+                return nuevaCategoria;
+            }
+            
         } catch (error) {
             this.logger.error(`Error creating category: ${error.message}`);
             throw new Error('Error creating category');
         }
+
+return category
     }
 
     async getAllCategories() {

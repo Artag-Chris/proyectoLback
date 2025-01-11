@@ -30,7 +30,12 @@ export class ProductosController {
         const respuesta = this.productosService.getAllCategories();
         return respuesta;
     }
-
+    
+    @Post('/createcategory')
+    createCategory(@Body() category: any) {
+        const respuesta = this.productosService.createCategory(category);
+        return respuesta;
+    }   
     @Get('/:id')
     getProductos(@Param('id') id: string) {
         const parsedId = parseInt(id, 10);
