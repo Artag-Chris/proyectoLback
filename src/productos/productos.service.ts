@@ -19,9 +19,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
 
 
     async createCategory( category: any) {
-        console.log(category)
             
-        //validar que la categoria no exista ya
         try {
             const existe = await this.category.findFirst(
                 {
@@ -41,7 +39,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
                         description: category.description,
                     }
                 });
-                //aqui podria ir mas codigo si necesitamos antes del return
+               
                 return nuevaCategoria;
             }
             
