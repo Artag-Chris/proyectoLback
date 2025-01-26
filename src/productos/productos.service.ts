@@ -230,7 +230,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
         });
 
        // console.log(`Found products: ${JSON.stringify(productos)}`);
-console.log(productos);
+
         return productos;
     } catch (error) {
         this.logger.error(
