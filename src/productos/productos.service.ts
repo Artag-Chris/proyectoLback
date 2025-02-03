@@ -143,7 +143,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
       const productos = await this.product.findMany({
         orderBy: {
           createdAt: 'desc',
-        }, 
+        },  
         take: 6,
       });
       return productos;
