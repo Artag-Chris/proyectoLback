@@ -151,7 +151,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
       this.logger.error(`Error fetching last six products: ${error.message}`);
       throw new Error('Error fetching last six products');
     }
-  }
+  }  
   async findCategoryByName(name: string) {
     return this.prisma.category.findFirst({
       where: { name },
