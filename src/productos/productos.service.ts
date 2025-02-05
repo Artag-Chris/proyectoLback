@@ -144,7 +144,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
         orderBy: {
           createdAt: 'desc',
         },  
-        take: 6,
+        take: 6, 
       });
       return productos;
     } catch (error) {
