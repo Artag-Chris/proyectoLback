@@ -75,4 +75,35 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error fetching order by ID');
     }
   }
+  async updatePedido(id: number, data: CreatePedidoDto) {
+    try {
+      const pedido = await this.order.update({
+        where: { id },
+        data: {
+          totalAmount: data.totalAmount,
+          userId: data.userId,
+          orderStatusId: data.orderStatusId,
+          orderItems: {
+            deleteMany: {}, // Elimina los items existentes
+            create: data.orderItems.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.price,
+            })),
+          },
+          transactions: {
+            deleteMany: {}, // Elimina las transacciones existentes
+            create: data.transactions.map(transaction => ({
+              amount: transaction.amount,
+              paymentMethod: transaction.paymentMethod,
+            })),
+          },
+        },
+      });
+      return pedido;
+    } catch (error) {
+      this.logger.error(`Error updating order: ${error.message}`, error.stack);
+      throw new Error('Error updating order');
+    }
+  }
 }
