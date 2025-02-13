@@ -9,6 +9,11 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     que pediran datos de forma especifica como productos vendidos por meses
     o los nuevos productos agregados los 6 ultimos productos
     *******************************************************************/
+
+    //TODO metodo que al pedirlo devuelva los productos vendidos por mes 
+    //TODO metodo que al pedirlo devuelva los productos nuevos agregados los ultimos 6 productos
+    //TODO metodo de lo mas vendido  
+    //TODO metodo de productos relacionados entre si 
   private readonly prisma = new PrismaClient();
   private readonly logger = new Logger('ProductosService');
 

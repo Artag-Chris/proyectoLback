@@ -4,6 +4,13 @@ import { CreatePedidoDto } from './dto/createPedido.dto';
 
 @Injectable()
 export class PedidosService extends PrismaClient implements OnModuleInit {
+  /*
+  clase referente a los pedidos  y recordatorios de los pedidos
+  */
+
+  //TODO crearemos un metodo para recordar a los admin que pedidos estan pendientes para ser enviados
+  //no tengo ni idea de como hacerlo pero suena buena la idea 
+  //entonces este servicio se encargaria de notificar a los admin a sus necesidades 
   private readonly logger = new Logger('PedidosService');
 
   onModuleInit() {

@@ -5,9 +5,11 @@ import { PrismaClient } from '@prisma/client';
 export class UsuariosService extends PrismaClient implements OnModuleInit {
 
   /*
-  creemos nuevos metodos como por ejemplo traer las ultimas personas registradas,
+  metodo referente a el usuario y sus acciones, tambien con tendencias sociales o productos vistos
   */
-
+//TODO crearemos un nuevo metodo para devolver los ultimos usuarios registrados con su tiempo
+//TODO crearemos alguna forma de poder ver los datos  que el usuario ha visto o comprado
+//que categorias ha visto y cuales son las que mas tiempo ha estado viendo
   private readonly logger = new Logger('ProductsService');
 
 
