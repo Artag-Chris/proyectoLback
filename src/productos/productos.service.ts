@@ -145,7 +145,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
           createdAt: 'desc',
         },  
         take: 6, 
-      });
+      }); 
       return productos;
     } catch (error) {
       this.logger.error(`Error fetching last six products: ${error.message}`);
