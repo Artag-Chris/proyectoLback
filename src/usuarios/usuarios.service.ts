@@ -4,6 +4,12 @@ import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class UsuariosService extends PrismaClient implements OnModuleInit {
 
+  /*
+  metodo referente a el usuario y sus acciones, tambien con tendencias sociales o productos vistos
+  */
+//TODO crearemos un nuevo metodo para devolver los ultimos usuarios registrados con su tiempo
+//TODO crearemos alguna forma de poder ver los datos  que el usuario ha visto o comprado
+//que categorias ha visto y cuales son las que mas tiempo ha estado viendo
   private readonly logger = new Logger('ProductsService');
 
 
@@ -14,22 +20,18 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
 
 
   async getUsuarios() {
-
     try {
       const usuarios = await this.user.findMany();
-      //console.log(usuarios);
       return usuarios;
     } catch (error) {
       this.logger.error(`Error getting users: ${error.message}`);
       throw new Error('Error getting users');
     }
-
   }
 
   async getUsuario(
     email: string
   ) {
-    //usa un try catch
     try {
       const usuario = await this.user.findUnique({ where: { email } });
       return usuario;
@@ -37,29 +39,22 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       this.logger.error(`Error getting user: ${error.message}`);
       throw new Error('Error getting user');
     }
-
   }
 
   async createUsuario(data: any) {
-    
     try {
-
       const existeEmail: any = await this.user.findUnique(
         { where: { email: data.email } });
-
-      if (!existeEmail) {
-        //aqui podriamos usar un dto
+      if (!existeEmail) {      
         const nuevoUsuario = await this.user.create({
-          data: {
-           
+          data: {    
             phoneNumber: data.phoneNumber,
             email: data.email,
             passwordHash: data.passwordHash,
             firstName: data.firstName,
             lastName: data.lastName,
           }
-        });
-        //aqui podria ir mas codigo si necesitamos antes del return
+        });        
         return nuevoUsuario;
       } else {
         return "ski";
@@ -68,12 +63,9 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       this.logger.error(`Error creating user: ${error.message}`);
       throw new Error('Error creating user');
     }
-
-
   };
 
   async updateUsuario(email: string, data: any) {
-    
     try {
       const usuario = await this.user.findUnique({ where: { email } });
       if (usuario) {
@@ -118,29 +110,21 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     }
   }
   async socialLogin(userData: any) {
-    
     const { email, name } = userData;
-  
     try {
-      // Check if user already exists
       const existingUser = await this.user.findUnique({
         where: { email },
       });
-      
-      if (existingUser) {
-        
+      if (existingUser) { 
         return existingUser;
       }
-
-      // Create new user
       const newUser = await this.createUsuario({
         username: name,
         email,
-        passwordHash: null, // No password for social login
+        passwordHash: null,
         firstName: name.split(' ')[0],
         lastName: name.split(' ').slice(1).join(' '),
       });
-
       return { message: 'User created successfully', user: newUser };
     } catch (error) {
       return { message: "usuario ya existe" };

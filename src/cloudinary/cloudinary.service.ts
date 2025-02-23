@@ -12,9 +12,6 @@ export class CloudinaryService {
     a subir archivos y cloudinary para subir a la nube
    ********************************************************************/
 
-
-
-
   constructor() {
     // Configuration de cloudinary
     cloudinary.config({
@@ -23,8 +20,6 @@ export class CloudinaryService {
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
   }
-
- //sube imagen a cloudinary
 async uploadImage(file: Express.Multer.File): Promise<  CloudinaryResponse > {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
