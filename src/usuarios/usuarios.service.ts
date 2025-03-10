@@ -130,5 +130,86 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       return { message: "usuario ya existe" };
     }
   }
+   // Obtener últimos usuarios registrados
+   //aqui pediremos los ultimos usuarios registrados mandando el parametro desde el admin
+   async getUltimosUsuarios(limit: number = 10) {
+    try {
+      return await this.user.findMany({
+        where: { isAvailable: true },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          createdAt: true,
+          profileImage: true
+        }
+      });
+    } catch (error) {
+      this.logger.error(`Error obteniendo últimos usuarios: ${error.message}`);
+      throw new Error('Error obteniendo últimos usuarios');
+    }
+  }
+
+  // Comparar registros por mes
+  async compararRegistrosPorMes(year: number, month1: number, month2: number) {
+    try {
+      const startMonth1 = new Date(year, month1 - 1, 1);
+      const endMonth1 = new Date(year, month1, 1);
+      
+      const startMonth2 = new Date(year, month2 - 1, 1);
+      const endMonth2 = new Date(year, month2, 1);
+
+      const [month1Count, month2Count] = await Promise.all([
+        this.user.count({
+          where: {
+            createdAt: { gte: startMonth1, lt: endMonth1 },
+            isAvailable: true
+          }
+        }),
+        this.user.count({
+          where: {
+            createdAt: { gte: startMonth2, lt: endMonth2 },
+            isAvailable: true
+          }
+        })
+      ]);
+
+      return {
+        [month1]: month1Count,
+        [month2]: month2Count,
+        diferencia: month1Count - month2Count,
+        porcentajeCambio: ((month1Count - month2Count) / month2Count) * 100
+      };
+    } catch (error) {
+      this.logger.error(`Error comparando registros: ${error.message}`);
+      throw new Error('Error comparando registros mensuales');
+    }
+  }
+
+  // Método adicional: Estadísticas de registros mensuales
+  async getEstadisticasRegistros(year: number) {
+    try {
+      const result = await this.user.groupBy({
+        by: ['createdAt'],
+        where: {
+          createdAt: { gte: new Date(year, 0, 1) },
+          isAvailable: true
+        },
+        _count: { id: true },
+        orderBy: { createdAt: 'asc' }
+      });
+
+      return result.map(entry => ({
+        mes: entry.createdAt.getMonth() + 1,
+        cantidad: entry._count.id
+      }));
+    } catch (error) {
+      this.logger.error(`Error obteniendo estadísticas: ${error.message}`);
+      throw new Error('Error obteniendo estadísticas de registros');
+    }
+  }
 
 }
