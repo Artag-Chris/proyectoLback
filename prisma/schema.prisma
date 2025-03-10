@@ -16,11 +16,13 @@ model User {
   lastName     String?
   address      String?
   phoneNumber  String?  @unique
+  profileImage String?  // Campo opcional para almacenar la URL de la imagen de perfil
   createdAt    DateTime @default(now())
   isAvailable  Boolean  @default(true)  // Campo para soft delete
   isAdmin      Boolean  @default(false) // Campo para definir si es administrador
   orders       Order[]
 }
+
 
 model Category {
   id          Int       @id @default(autoincrement())
