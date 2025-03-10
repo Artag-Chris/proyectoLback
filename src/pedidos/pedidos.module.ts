@@ -5,6 +5,7 @@ import { PedidosService } from './pedidos.service';
 @Module({
     controllers: [PedidosController],    
     providers: [PedidosService],
+    exports: [PedidosService]
 })
 export class PedidosModule {
      
