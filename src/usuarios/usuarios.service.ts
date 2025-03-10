@@ -153,7 +153,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  // Comparar registros por mes
+  // Comparar registros por mes se pasa año y dos meses para comparar 
   async compararRegistrosPorMes(year: number, month1: number, month2: number) {
     try {
       const startMonth1 = new Date(year, month1 - 1, 1);
@@ -189,7 +189,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  // Método adicional: Estadísticas de registros mensuales
+  // Estadísticas de registros mensuales 
   async getEstadisticasRegistros(year: number) {
     try {
       const result = await this.user.groupBy({
