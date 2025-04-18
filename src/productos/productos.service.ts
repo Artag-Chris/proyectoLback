@@ -215,7 +215,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
 
       return producto;
     } catch (error) {
-      this.logger.error(`Error fetching product by id: ${error.message}`);
+      this.logger.error(`Error fetching product by id: ${error.message}`); 
       throw new Error('Error fetching product by id');
     }
   }
