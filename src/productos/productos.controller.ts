@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { Express } from 'express';
 import { Multer } from 'multer';
 import { ProductosService } from "./productos.service";
@@ -18,10 +18,31 @@ export class ProductosController {
         return respuesta;
     }
 
+   
+
     @Get('/latest')
     getLatestProductos() {
         const respuesta = this.productosService.getLastSixProductos();
         return respuesta;
+    }
+
+    @Get('/latest/:id')
+    async getLastSixProductosCategory(@Param('id') id: string) {
+        try {
+            const parsedId = parseInt(id, 10);
+            if (isNaN(parsedId)) {
+                throw new BadRequestException('Invalid category ID');
+            }
+            
+            const product = await this.productosService.getLastSixProductosCategory(parsedId);
+           
+            return {
+                product,
+                soldProducts: [] // You can implement this later if needed
+            };
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Get('/categorias')

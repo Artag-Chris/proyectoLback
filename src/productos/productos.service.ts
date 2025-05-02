@@ -65,11 +65,11 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
   async createProducto(data: any) {
     const categoria = await this.findCategoryByName(data.category);
     if (!categoria) {
-      let categoria = await this.findOrCreateCategoryByName(
+      const categoria = await this.findOrCreateCategoryByName(
         data.category,
         'Default description',
       );
-      let producto = await this.prisma.product.create({
+      const producto = await this.prisma.product.create({
         data: {
           name: data.name,
           description: data.description,
@@ -118,6 +118,27 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error fetching last six products');
     }
   }  
+  async getLastSixProductosCategory(categoryId: number) {
+    try {
+        const product = await this.prisma.product.findMany({
+            where: {
+                categoryId,
+                isAvailable: true 
+            },
+            take: 10,
+            orderBy: {
+                createdAt: 'desc'
+            },
+            include: {
+              //  category: true
+            }
+        });
+        //console.log(`Fetched last six products for categoryId ${categoryId}:`, products);
+        return product;
+    } catch (error) {
+        throw new Error(`Failed to fetch products: ${error.message}`);
+    }
+}
   async findCategoryByName(name: string) {
     return this.prisma.category.findFirst({
       where: { name },
