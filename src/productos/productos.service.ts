@@ -10,10 +10,10 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     o los nuevos productos agregados los 6 ultimos productos
     *******************************************************************/
 
-    //TODO metodo que al pedirlo devuelva los productos vendidos por mes 
-    //TODO metodo que al pedirlo devuelva los productos nuevos agregados los ultimos 6 productos
-    //TODO metodo de lo mas vendido  
-    //TODO metodo de productos relacionados entre si 
+  //TODO metodo que al pedirlo devuelva los productos vendidos por mes 
+  //TODO metodo que al pedirlo devuelva los productos nuevos agregados los ultimos 6 productos
+  //TODO metodo de lo mas vendido  
+  //TODO metodo de productos relacionados entre si 
   private readonly prisma = new PrismaClient();
   private readonly logger = new Logger('ProductosService');
 
@@ -109,36 +109,36 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
       const productos = await this.product.findMany({
         orderBy: {
           createdAt: 'desc',
-        },  
-        take: 6, 
-      }); 
+        },
+        take: 6,
+      });
       return productos;
     } catch (error) {
       this.logger.error(`Error fetching last six products: ${error.message}`);
       throw new Error('Error fetching last six products');
     }
-  }  
+  }
   async getLastSixProductosCategory(categoryId: number) {
     try {
-        const product = await this.prisma.product.findMany({
-            where: {
-                categoryId,
-                isAvailable: true 
-            },
-            take: 10,
-            orderBy: {
-                createdAt: 'desc'
-            },
-            include: {
-              //  category: true
-            }
-        });
-        //console.log(`Fetched last six products for categoryId ${categoryId}:`, products);
-        return product;
+      const product = await this.prisma.product.findMany({
+        where: {
+          categoryId,
+          isAvailable: true
+        },
+        take: 10,
+        orderBy: {
+          createdAt: 'desc'
+        },
+        include: {
+          //  category: true
+        }
+      });
+      //console.log(`Fetched last six products for categoryId ${categoryId}:`, products);
+      return product;
     } catch (error) {
-        throw new Error(`Failed to fetch products: ${error.message}`);
+      throw new Error(`Failed to fetch products: ${error.message}`);
     }
-}
+  }
   async findCategoryByName(name: string) {
     return this.prisma.category.findFirst({
       where: { name },
@@ -197,39 +197,39 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
 
       return producto;
     } catch (error) {
-      this.logger.error(`Error fetching product by id: ${error.message}`); 
+      this.logger.error(`Error fetching product by id: ${error.message}`);
       throw new Error('Error fetching product by id');
     }
   }
   async getProductosByCategory(categoryId: number) {
     console.log(`Received categoryId: ${categoryId}`);
     try {
-        // Asegúrate de que categoryId sea un número entero
-        const parsedCategoryId = parseInt(categoryId.toString(), 10);
-        if (isNaN(parsedCategoryId)) {
-            throw new Error('Invalid categoryId');
-        }
+      // Asegúrate de que categoryId sea un número entero
+      const parsedCategoryId = parseInt(categoryId.toString(), 10);
+      if (isNaN(parsedCategoryId)) {
+        throw new Error('Invalid categoryId');
+      }
 
-     //   console.log(`Parsed categoryId: ${parsedCategoryId}`);
+      //   console.log(`Parsed categoryId: ${parsedCategoryId}`);
 
-        const productos = await this.product.findMany({
-            where: { categoryId: parsedCategoryId },
-        });
+      const productos = await this.product.findMany({
+        where: { categoryId: parsedCategoryId },
+      });
 
-       // console.log(`Found products: ${JSON.stringify(productos)}`);
+      // console.log(`Found products: ${JSON.stringify(productos)}`);
 
-        return productos;
+      return productos;
     } catch (error) {
-        this.logger.error(
-            `Error fetching products by category: ${error.message}`,
-        );
-        throw new Error('Error fetching products by category');
+      this.logger.error(
+        `Error fetching products by category: ${error.message}`,
+      );
+      throw new Error('Error fetching products by category');
     }
-}
- // Productos más vendidos por mes
- async getMasVendidosPorMes(year: number, month: number) {
-  try {
-    return await this.$queryRaw`
+  }
+  // Productos más vendidos por mes
+  async getMasVendidosPorMes(year: number, month: number) {
+    try {
+      return await this.$queryRaw`
       SELECT 
         p.id,
         p.name,
@@ -247,16 +247,16 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
       ORDER BY total_vendido DESC
       LIMIT 10
     `;
-  } catch (error) {
-    this.logger.error(`Error obteniendo más vendidos por mes: ${error.message}`);
-    throw new Error('Error obteniendo productos más vendidos');
+    } catch (error) {
+      this.logger.error(`Error obteniendo más vendidos por mes: ${error.message}`);
+      throw new Error('Error obteniendo productos más vendidos');
+    }
   }
-}
 
-// Ventas anuales por producto
-async getVentasAnuales(year: number) {
-  try {
-    return await this.$queryRaw`
+  // Ventas anuales por producto
+  async getVentasAnuales(year: number) {
+    try {
+      return await this.$queryRaw`
       SELECT 
         p.id,
         p.name,
@@ -272,21 +272,21 @@ async getVentasAnuales(year: number) {
       GROUP BY p.id, mes
       ORDER BY mes, total_vendido DESC
     `;
-  } catch (error) {
-    this.logger.error(`Error obteniendo ventas anuales: ${error.message}`);
-    throw new Error('Error obteniendo reporte anual');
+    } catch (error) {
+      this.logger.error(`Error obteniendo ventas anuales: ${error.message}`);
+      throw new Error('Error obteniendo reporte anual');
+    }
   }
-}
 
-// Producto más vendido histórico
-async getProductoMasVendido() {
-  try {
-    const [topProduct] = await this.$queryRaw<Array<{
-      id: number;
-      name: string;
-      imageUrl: string;
-      total_vendido: number;
-    }>>`
+  // Producto más vendido histórico
+  async getProductoMasVendido() {
+    try {
+      const [topProduct] = await this.$queryRaw<Array<{
+        id: number;
+        name: string;
+        imageUrl: string;
+        total_vendido: number;
+      }>>`
       SELECT 
         p.id,
         p.name,
@@ -299,39 +299,39 @@ async getProductoMasVendido() {
       ORDER BY total_vendido DESC
       LIMIT 1
     `;
-    return topProduct;
-  } catch (error) {
-    this.logger.error(`Error obteniendo producto más vendido: ${error.message}`);
-    throw new Error('Error obteniendo producto estrella');
+      return topProduct;
+    } catch (error) {
+      this.logger.error(`Error obteniendo producto más vendido: ${error.message}`);
+      throw new Error('Error obteniendo producto estrella');
+    }
   }
-}
 
-// Últimas ventas (transacciones recientes)
-async getUltimasVentas(limit: number = 10) {
-  try {
-    return await this.order.findMany({
-      where: { isAvailable: true },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      include: {
-        orderItems: {
-          include: { product: true }
-        },
-        user: {
-          select: { email: true, firstName: true, lastName: true }
+  // Últimas ventas (transacciones recientes)
+  async getUltimasVentas(limit: number = 10) {
+    try {
+      return await this.order.findMany({
+        where: { isAvailable: true },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        include: {
+          orderItems: {
+            include: { product: true }
+          },
+          user: {
+            select: { email: true, firstName: true, lastName: true }
+          }
         }
-      }
-    });
-  } catch (error) {
-    this.logger.error(`Error obteniendo últimas ventas: ${error.message}`);
-    throw new Error('Error obteniendo transacciones recientes');
+      });
+    } catch (error) {
+      this.logger.error(`Error obteniendo últimas ventas: ${error.message}`);
+      throw new Error('Error obteniendo transacciones recientes');
+    }
   }
-}
 
-// Tendencia de ventas últimos 6 meses
-async getTendenciaVentas() {
-  try {
-    return await this.$queryRaw`
+  // Tendencia de ventas últimos 6 meses
+  async getTendenciaVentas() {
+    try {
+      return await this.$queryRaw`
       SELECT 
         DATE_TRUNC('month', o."createdAt") as mes,
         SUM(oi.quantity * oi.price) as ingresos,
@@ -344,33 +344,33 @@ async getTendenciaVentas() {
       GROUP BY mes
       ORDER BY mes ASC
     `;
-  } catch (error) {
-    this.logger.error(`Error obteniendo tendencia ventas: ${error.message}`);
-    throw new Error('Error obteniendo tendencia de ventas');
+    } catch (error) {
+      this.logger.error(`Error obteniendo tendencia ventas: ${error.message}`);
+      throw new Error('Error obteniendo tendencia de ventas');
+    }
   }
-}
 
-// Productos con stock crítico (personalizable por umbral)
-async getStockCritico(umbral: number = 10) {
-  try {
-    return await this.product.findMany({
-      where: {
-        stock: { lt: umbral },
-        isAvailable: true
-      },
-      orderBy: { stock: 'asc' },
-      include: { category: true }
-    });
-  } catch (error) {
-    this.logger.error(`Error obteniendo stock crítico: ${error.message}`);
-    throw new Error('Error obteniendo productos con bajo stock');
+  // Productos con stock crítico (personalizable por umbral)
+  async getStockCritico(umbral: number = 10) {
+    try {
+      return await this.product.findMany({
+        where: {
+          stock: { lt: umbral },
+          isAvailable: true
+        },
+        orderBy: { stock: 'asc' },
+        include: { category: true }
+      });
+    } catch (error) {
+      this.logger.error(`Error obteniendo stock crítico: ${error.message}`);
+      throw new Error('Error obteniendo productos con bajo stock');
+    }
   }
-}
 
-// Comparativa de ventas entre categorías
-async getVentasPorCategoria(year: number) {
-  try {
-    return await this.$queryRaw`
+  // Comparativa de ventas entre categorías
+  async getVentasPorCategoria(year: number) {
+    try {
+      return await this.$queryRaw`
       SELECT 
         c.name as categoria,
         SUM(oi.quantity) as unidades,
@@ -385,51 +385,82 @@ async getVentasPorCategoria(year: number) {
       GROUP BY categoria
       ORDER BY ingresos DESC
     `;
-  } catch (error) {
-    this.logger.error(`Error obteniendo ventas por categoría: ${error.message}`);
-    throw new Error('Error obteniendo comparativa de categorías');
+    } catch (error) {
+      this.logger.error(`Error obteniendo ventas por categoría: ${error.message}`);
+      throw new Error('Error obteniendo comparativa de categorías');
+    }
   }
-}
-async updateProduct(id: number, data: {
-  name?: string;
-  description?: string;
-  price?: number;
-  stock?: number;
-  categoryId?: number;
-  imageUrl?: string;
-  isAvailable?: boolean;
-}) {
-  try {
+  async updateProduct(id: number, data: {
+    name?: string;
+    description?: string;
+    price?: number;
+    stock?: number;
+    categoryId?: number;
+    imageUrl?: string;
+    isAvailable?: boolean;
+  }) {
+    try {
       // Verificar si el producto existe
       const existingProduct = await this.product.findUnique({
-          where: { id }
+        where: { id }
       });
 
       if (!existingProduct) {
-          throw new Error('Product not found');
+        throw new Error('Product not found');
       }
 
       // Actualizar el producto
       const updatedProduct = await this.product.update({
-          where: { id },
-          data: {
-              name: data.name,
-              description: data.description,
-              price: data.price,
-              stock: data.stock,
-              categoryId: data.categoryId,
-              imageUrl: data.imageUrl,
-              isAvailable: data.isAvailable
-          },
-          include: {
-              category: true
-          }
+        where: { id },
+        data: {
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          stock: data.stock,
+          categoryId: data.categoryId,
+          imageUrl: data.imageUrl,
+          isAvailable: data.isAvailable
+        },
+        include: {
+          category: true
+        }
       });
       return updatedProduct;
-  } catch (error) {
+    } catch (error) {
       this.logger.error(`Error updating product: ${error.message}`);
       throw new Error(`Error updating product: ${error.message}`);
+    }
   }
-}
+  async updateCategory(id: number, data: {
+    name?: string;
+    description?: string;
+    isAvailable?: boolean;
+  }) {
+    try {
+      // Verificar si la categoría existe
+      const existingCategory = await this.category.findUnique({
+        where: { id }
+      });
+
+      if (!existingCategory) {
+        throw new Error('Category not found');
+      }
+
+      // Actualizar la categoría
+      const updatedCategory = await this.category.update({
+        where: { id },
+        data: {
+          name: data.name,
+          description: data.description,
+          isAvailable: data.isAvailable
+        }
+      });
+
+      return updatedCategory;
+    } catch (error) {
+      this.logger.error(`Error updating category: ${error.message}`);
+      throw new Error(`Error updating category: ${error.message}`);
+    }
+  }
 }
 

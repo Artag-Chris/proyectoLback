@@ -118,7 +118,7 @@ export class ProductosController {
         }
     ) {
         try {
-            
+
             const parsedId = parseInt(id, 10);
             if (isNaN(parsedId)) {
                 throw new BadRequestException('Invalid product ID');
@@ -134,6 +134,30 @@ export class ProductosController {
         } catch (error) {
             throw new HttpException(
                 error.message || 'Error updating product',
+                HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+    @Put('/category/update/:id')
+    async updateCategory(
+        @Param('id') id: string,
+        @Body() body: {
+            name?: string;
+            description?: string;
+            isAvailable?: boolean;
+        }
+    ) {
+        try {
+            const parsedId = parseInt(id, 10);
+            if (isNaN(parsedId)) {
+                throw new BadRequestException('Invalid category ID');
+            }
+
+            const updatedCategory = await this.productosService.updateCategory(parsedId, body);
+            return updatedCategory;
+        } catch (error) {
+            throw new HttpException(
+                error.message || 'Error updating category',
                 HttpStatus.BAD_REQUEST
             );
         }
