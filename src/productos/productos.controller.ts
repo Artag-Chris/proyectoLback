@@ -1,6 +1,5 @@
-import { BadRequestException, Body, Controller, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, Param, ParseFilePipe, Post, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { Express } from 'express';
-import { Multer } from 'multer';
 import { ProductosService } from "./productos.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
@@ -18,7 +17,7 @@ export class ProductosController {
         return respuesta;
     }
 
-   
+
 
     @Get('/latest')
     getLatestProductos() {
@@ -33,9 +32,9 @@ export class ProductosController {
             if (isNaN(parsedId)) {
                 throw new BadRequestException('Invalid category ID');
             }
-            
+
             const product = await this.productosService.getLastSixProductosCategory(parsedId);
-           
+
             return {
                 product,
                 soldProducts: [] // You can implement this later if needed
@@ -104,5 +103,39 @@ export class ProductosController {
             desCategory
         });
         return producto;
+    }
+
+    @Put('/update/:id')
+    async updateProduct(
+        @Param('id') id: string,
+        @Body() body: {
+            name?: string;
+            description?: string;
+            price?: number;
+            stock?: number;
+            categoryId?: number;
+            imageUrl?: string;
+        }
+    ) {
+        try {
+            
+            const parsedId = parseInt(id, 10);
+            if (isNaN(parsedId)) {
+                throw new BadRequestException('Invalid product ID');
+            }
+
+            // Parse numeric values
+            if (body.price) body.price = parseFloat(body.price.toString());
+            if (body.stock) body.stock = parseInt(body.stock.toString(), 10);
+            if (body.categoryId) body.categoryId = parseInt(body.categoryId.toString(), 10);
+
+            const updatedProduct = await this.productosService.updateProduct(parsedId, body);
+            return updatedProduct;
+        } catch (error) {
+            throw new HttpException(
+                error.message || 'Error updating product',
+                HttpStatus.BAD_REQUEST
+            );
+        }
     }
 }

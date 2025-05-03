@@ -390,5 +390,46 @@ async getVentasPorCategoria(year: number) {
     throw new Error('Error obteniendo comparativa de categorías');
   }
 }
+async updateProduct(id: number, data: {
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  categoryId?: number;
+  imageUrl?: string;
+  isAvailable?: boolean;
+}) {
+  try {
+      // Verificar si el producto existe
+      const existingProduct = await this.product.findUnique({
+          where: { id }
+      });
+
+      if (!existingProduct) {
+          throw new Error('Product not found');
+      }
+
+      // Actualizar el producto
+      const updatedProduct = await this.product.update({
+          where: { id },
+          data: {
+              name: data.name,
+              description: data.description,
+              price: data.price,
+              stock: data.stock,
+              categoryId: data.categoryId,
+              imageUrl: data.imageUrl,
+              isAvailable: data.isAvailable
+          },
+          include: {
+              category: true
+          }
+      });
+      return updatedProduct;
+  } catch (error) {
+      this.logger.error(`Error updating product: ${error.message}`);
+      throw new Error(`Error updating product: ${error.message}`);
+  }
+}
 }
 
