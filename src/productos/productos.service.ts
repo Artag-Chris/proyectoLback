@@ -437,6 +437,7 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     isAvailable?: boolean;
   }) {
     try {
+
       // Verificar si la categoría existe
       const existingCategory = await this.category.findUnique({
         where: { id }

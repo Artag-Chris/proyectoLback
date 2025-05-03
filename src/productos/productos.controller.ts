@@ -148,6 +148,7 @@ export class ProductosController {
         }
     ) {
         try {
+
             const parsedId = parseInt(id, 10);
             if (isNaN(parsedId)) {
                 throw new BadRequestException('Invalid category ID');
