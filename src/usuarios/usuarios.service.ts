@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit, Param } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit, Param, Post } from "@nestjs/common";
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -57,7 +57,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
         });        
         return nuevoUsuario;
       } else {
-        return "ski";
+        return "ok";
       }
     } catch (error) {
       this.logger.error(`Error creating user: ${error.message}`);
@@ -213,7 +213,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
   }
  async getUsuarioInAdmin(id: number) {
   try {
-    console.log(id);
+
     const usuario = await this.user.findUnique({ where: { id } });
     return usuario;
   } catch (error) {
@@ -221,4 +221,32 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     throw new Error('Error getting user');
   }
  }
+ async createUsuarioInAdmin(data: any , profileImage?: Express.Multer.File) {
+
+  
+  try {
+    const existeEmail: any = await this.user.findUnique(
+      { where: { email: data.email } });
+    if (!existeEmail) {      
+      const nuevoUsuario = await this.user.create({
+        data: {    
+          phoneNumber: data.phoneNumber,
+          email: data.email,
+          profileImage: profileImage ? profileImage.path : null,
+          passwordHash: data.passwordHash,
+          firstName: data.firstName,
+          lastName: data.lastName, 
+        }
+      });        
+      return 'ok';
+    } else {
+      return "bad request";
+    }
+  } catch (error) {
+    this.logger.error(`Error creating user: ${error.message}`);
+    throw new Error('Error creating user');
+  }
+}
+
+
 }

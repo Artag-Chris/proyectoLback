@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Logger, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Get, Logger, Param, Post, Put, ValidationPipe,UsePipes, UseInterceptors, UploadedFile } from "@nestjs/common";
 import { UsuariosService } from "./usuarios.service";
+import { CreateUsuarioAdminDto } from "./dto/createUserInAdmin";
+import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @Controller('usuarios')
@@ -16,14 +18,12 @@ export class UsuariosController {
     }
 
     @Get('/clientes')
-
     getUsuarios() {
-
         const respuesta = this.usuariosService.getUsuarios();
         return respuesta;
     }
-    @Get('/cliente/:email')
 
+    @Get('/cliente/:email')
     getUsuario(
         @Param('email') email: string,
     ) {
@@ -31,8 +31,8 @@ export class UsuariosController {
         const respuesta = this.usuariosService.getUsuario(email);
         return respuesta;
     }
-    @Post('/cliente')
 
+    @Post('/cliente')
     createUsuario(
         @Body()
         data: any,  // Este es un objeto con los datos del cliente a crear, podría ser un DTO (Data Transfer Object)
@@ -40,6 +40,7 @@ export class UsuariosController {
         const respuesta = this.usuariosService.createUsuario(data);
         return respuesta;
     }
+
     @Put('/cliente/:email')
     updateUsuario(
         @Param('email') email: string,
@@ -48,6 +49,7 @@ export class UsuariosController {
         const respuesta = this.usuariosService.updateUsuario(email, data);
         return respuesta;
     }
+
     @Put('/clienteborrar/:phone')
     deleteUsuario(
         @Param('phone') phoneNumber: string
@@ -55,6 +57,7 @@ export class UsuariosController {
         const respuesta = this.usuariosService.deleteUsuario(phoneNumber);
         return respuesta;
     }
+
     @Post('/sociallogin')
     socialLogin(
         @Body()
@@ -64,14 +67,23 @@ export class UsuariosController {
         const respuesta = this.usuariosService.socialLogin(userData);
         return respuesta;
     }
+
     @Get('/admin/user/:id')
     getUserById(
       @Param('id') id: string,
     ) {
       const numericId = parseInt(id, 10);
-      
-    
       return this.usuariosService.getUsuarioInAdmin(numericId);
+    }
+
+    @Post('/admin/usuario')
+    @UseInterceptors(FileInterceptor('profileImage'))
+    @UsePipes(new ValidationPipe({ transform: true }))
+    createUsuarioEnAdmin(
+      @Body() data: CreateUsuarioAdminDto,
+      @UploadedFile() profileImage?: Express.Multer.File
+    ) {
+      return this.usuariosService.createUsuarioInAdmin(data, profileImage);
     }
 }
 
