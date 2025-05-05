@@ -211,5 +211,14 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error obteniendo estadísticas de registros');
     }
   }
-
+ async getUsuarioInAdmin(id: number) {
+  try {
+    console.log(id);
+    const usuario = await this.user.findUnique({ where: { id } });
+    return usuario;
+  } catch (error) {
+    this.logger.error(`Error getting user: ${error.message}`);
+    throw new Error('Error getting user');
+  }
+ }
 }

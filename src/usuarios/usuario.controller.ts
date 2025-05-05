@@ -64,7 +64,15 @@ export class UsuariosController {
         const respuesta = this.usuariosService.socialLogin(userData);
         return respuesta;
     }
-
+    @Get('/admin/user/:id')
+    getUserById(
+      @Param('id') id: string,
+    ) {
+      const numericId = parseInt(id, 10);
+      
+    
+      return this.usuariosService.getUsuarioInAdmin(numericId);
+    }
 }
 
 
