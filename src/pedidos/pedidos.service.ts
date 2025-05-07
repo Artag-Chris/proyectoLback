@@ -19,6 +19,7 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
   }
 
   async createPedido(data: CreatePedidoDto) {
+    console.log('Data:', data);
     try {
       const pedido = await this.order.create({
         data: {
@@ -113,4 +114,19 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error updating order');
     }
   }
+
+  // En tu OrderStatusService
+async createOrderStatus(createOrderStatusDto: { status: string }) {
+  try {
+    return await this.orderStatus.create({
+      data: {
+        status: createOrderStatusDto.status,
+        // isAvailable tiene valor por defecto (true) según tu schema
+      }
+    });
+  } catch (error) {
+    this.logger.error(`Error creating order status: ${error.message}`);
+    throw new Error('Error creating order status');
+  }
+}
 }
