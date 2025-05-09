@@ -23,6 +23,19 @@ export class PedidosController {
       data: incomeData
     };
   }
+  @Get('/stats')
+async getVentasStats() {
+  const statsData = await this.pedidosService.getVentasStats();
+  return {
+    message: {
+      total: `Ventas totales: ${statsData.totalVentas.count} pedidos por $${statsData.totalVentas.amount}`,
+      currentMonth: `Mes actual (${statsData.currentMonth.month}): ${statsData.currentMonth.count} pedidos por $${statsData.currentMonth.amount}`,
+      previousMonth: `Mes anterior (${statsData.previousMonth.month}): ${statsData.previousMonth.count} pedidos por $${statsData.previousMonth.amount}`,
+      changes: `Cambio en ingresos: ${statsData.changes.incomePercentage}% | Cambio en número de ventas: ${statsData.changes.countPercentage}%`
+    },
+    data: statsData
+  };
+}
 
   @Get('/:id')
   async getPedidoById(@Param('id') id: string) {

@@ -195,4 +195,101 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error fetching income data');
     }
   }
+  async getVentasStats() {
+    try {
+      // Get total sales (excluding cancelled orders)
+      const totalVentas = await this.order.aggregate({
+        where: {
+          isAvailable: true,  // Only count active orders
+        },
+        _count: {
+          id: true,  // Count number of orders
+        },
+        _sum: {
+          totalAmount: true,  // Sum total amount
+        },
+      });
+  
+      // Get current month's data
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentYear = currentDate.getFullYear();
+      
+      const currentMonthVentas = await this.order.aggregate({
+        where: {
+          isAvailable: true,
+          createdAt: {
+            gte: new Date(currentYear, currentMonth - 1, 1),
+            lt: new Date(currentYear, currentMonth, 1),
+          },
+        },
+        _count: {
+          id: true,
+        },
+        _sum: {
+          totalAmount: true,
+        },
+      });
+  
+      // Get previous month's data
+      const previousMonthVentas = await this.order.aggregate({
+        where: {
+          isAvailable: true,
+          createdAt: {
+            gte: new Date(currentYear, currentMonth - 2, 1),
+            lt: new Date(currentYear, currentMonth - 1, 1),
+          },
+        },
+        _count: {
+          id: true,
+        },
+        _sum: {
+          totalAmount: true,
+        },
+      });
+  
+      // Calculate percentage changes
+      const currentMonthTotal = currentMonthVentas._sum.totalAmount || 0;
+      const previousMonthTotal = previousMonthVentas._sum.totalAmount || 0;
+      const currentMonthCount = currentMonthVentas._count.id || 0;
+      const previousMonthCount = previousMonthVentas._count.id || 0;
+  
+      // Calculate percentage changes
+      let incomePercentageChange = 0;
+      let countPercentageChange = 0;
+  
+      if (previousMonthTotal > 0) {
+        incomePercentageChange = ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100;
+      }
+  
+      if (previousMonthCount > 0) {
+        countPercentageChange = ((currentMonthCount - previousMonthCount) / previousMonthCount) * 100;
+      }
+  
+      return {
+        totalVentas: {
+          count: totalVentas._count.id || 0,
+          amount: totalVentas._sum.totalAmount || 0,
+        },
+        currentMonth: {
+          month: currentMonth,
+          count: currentMonthCount,
+          amount: currentMonthTotal,
+        },
+        previousMonth: {
+          month: currentMonth - 1,
+          count: previousMonthCount,
+          amount: previousMonthTotal,
+        },
+        changes: {
+          incomePercentage: parseFloat(incomePercentageChange.toFixed(2)),
+          countPercentage: parseFloat(countPercentageChange.toFixed(2)),
+        }
+      };
+  
+    } catch (error) {
+      this.logger.error(`Error fetching sales stats: ${error.message}`, error.stack);
+      throw new Error('Error fetching sales stats');
+    }
+  }
 }
