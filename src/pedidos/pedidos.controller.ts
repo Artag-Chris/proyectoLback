@@ -12,6 +12,11 @@ export class PedidosController {
     const pedidos = await this.pedidosService.getAllPedidos();
     return pedidos;
   }
+  @Get('/totalIncome')
+  async getTotalIncome() {
+    const totalIncome = await this.pedidosService.getTotalIncome();
+    return totalIncome;
+  }
 
   @Get('/:id')
   async getPedidoById(@Param('id') id: string) {
@@ -19,6 +24,7 @@ export class PedidosController {
     const pedido = await this.pedidosService.getPedidoById(parsedId);
     return pedido;
   }
+
 
   @Post('/create')
   async createPedido(@Body() createPedidoDto: CreatePedidoDto) {
@@ -31,4 +37,5 @@ export class PedidosController {
     const pedido = await this.pedidosService.updatePedido(parsedId, createPedidoDto);
     return pedido;
   }
+ 
 }

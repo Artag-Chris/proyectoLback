@@ -63,7 +63,7 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error fetching orders');
     }
   }
-  
+
   // Método para obtener una orden por ID
   async getPedidoById(id: number) {
     try {
@@ -116,17 +116,31 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
   }
 
   // En tu OrderStatusService
-async createOrderStatus(createOrderStatusDto: { status: string }) {
-  try {
-    return await this.orderStatus.create({
-      data: {
-        status: createOrderStatusDto.status,
-        // isAvailable tiene valor por defecto (true) según tu schema
-      }
-    });
-  } catch (error) {
-    this.logger.error(`Error creating order status: ${error.message}`);
-    throw new Error('Error creating order status');
+  async createOrderStatus(createOrderStatusDto: { status: string }) {
+    try {
+      return await this.orderStatus.create({
+        data: {
+          status: createOrderStatusDto.status,
+          // isAvailable tiene valor por defecto (true) según tu schema
+        }
+      });
+    } catch (error) {
+      this.logger.error(`Error creating order status: ${error.message}`);
+      throw new Error('Error creating order status');
+    }
   }
-}
+  async getTotalIncome() {
+
+    try {
+      const totalIncome = await this.order.aggregate({
+        _sum: {
+          totalAmount: true,
+        },
+      });
+      return totalIncome._sum.totalAmount || 0;
+    } catch (error) {
+      this.logger.error(`Error fetching total income: ${error.message}`, error.stack);
+      throw new Error('Error fetching total income');
+    }
+  }
 }
