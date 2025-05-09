@@ -14,8 +14,14 @@ export class PedidosController {
   }
   @Get('/totalIncome')
   async getTotalIncome() {
-    const totalIncome = await this.pedidosService.getTotalIncome();
-    return totalIncome;
+    const incomeData = await this.pedidosService.getTotalIncome();
+    return {
+      message: `Mes actual (${incomeData.currentMonth.month}): $${incomeData.currentMonth.income}\n` +
+               `Mes anterior (${incomeData.previousMonth.month}): $${incomeData.previousMonth.income}\n` +
+               `Porcentaje de cambio: ${incomeData.percentageChange}%\n` +
+               `Ingreso total: $${incomeData.totalIncome}`,
+      data: incomeData
+    };
   }
 
   @Get('/:id')

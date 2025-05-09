@@ -130,17 +130,69 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
     }
   }
   async getTotalIncome() {
-
     try {
+      // Get total income
       const totalIncome = await this.order.aggregate({
         _sum: {
           totalAmount: true,
         },
       });
-      return totalIncome._sum.totalAmount || 0;
+  
+      // Get current month's data
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentYear = currentDate.getFullYear();
+      
+      const currentMonthIncome = await this.order.aggregate({
+        where: {
+          createdAt: {
+            gte: new Date(currentYear, currentMonth - 1, 1),
+            lt: new Date(currentYear, currentMonth, 1),
+          },
+        },
+        _sum: {
+          totalAmount: true,
+        },
+      });
+  
+      // Get previous month's data
+      const previousMonthIncome = await this.order.aggregate({
+        where: {
+          createdAt: {
+            gte: new Date(currentYear, currentMonth - 2, 1),
+            lt: new Date(currentYear, currentMonth - 1, 1),
+          },
+        },
+        _sum: {
+          totalAmount: true,
+        },
+      });
+  
+      // Calculate percentage change
+      const currentMonthTotal = currentMonthIncome._sum.totalAmount || 0;
+      const previousMonthTotal = previousMonthIncome._sum.totalAmount || 0;
+      let percentageChange = 0;
+  
+      if (previousMonthTotal > 0) {
+        percentageChange = ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100;
+      }
+  
+      return {
+        totalIncome: totalIncome._sum.totalAmount || 0,
+        currentMonth: {
+          month: currentMonth,
+          income: currentMonthTotal
+        },
+        previousMonth: {
+          month: currentMonth - 1,
+          income: previousMonthTotal
+        },
+        percentageChange: parseFloat(percentageChange.toFixed(2))
+      };
+  
     } catch (error) {
-      this.logger.error(`Error fetching total income: ${error.message}`, error.stack);
-      throw new Error('Error fetching total income');
+      this.logger.error(`Error fetching income data: ${error.message}`, error.stack);
+      throw new Error('Error fetching income data');
     }
   }
 }
