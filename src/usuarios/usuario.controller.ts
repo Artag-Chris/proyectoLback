@@ -22,6 +22,11 @@ export class UsuariosController {
         const respuesta = this.usuariosService.getUsuarios();
         return respuesta;
     }
+    @Get('/statsClientes')
+    getUsuariosStats() {
+        const respuesta = this.usuariosService.getUsuariosStats();
+        return respuesta;
+    }
 
     @Get('/cliente/:email')
     getUsuario(

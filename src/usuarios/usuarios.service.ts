@@ -247,6 +247,73 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     throw new Error('Error creating user');
   }
 }
+async getUsuariosStats() {
+  try {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
 
+    // Get basic stats
+    const totalUsuarios = await this.user.count({
+      where: { isAvailable: true }
+    });
+    
+    const usuariosActivos = await this.user.count({
+      where: { isAvailable: true }
+    });
+    
+    const usuariosInActivos = await this.user.count({
+      where: { isAvailable: false }
+    });
+
+    // Get current month subscriptions
+    const subscribedThisMonth = await this.user.count({
+      where: {
+        isAvailable: true,
+        createdAt: {
+          gte: new Date(currentYear, currentMonth, 1),
+          lt: new Date(currentYear, currentMonth + 1, 1),
+        },
+      },
+    });
+
+    // Get last month subscriptions
+    const subscribedLastMonth = await this.user.count({
+      where: {
+        isAvailable: true,
+        createdAt: {
+          gte: new Date(currentYear, currentMonth - 1, 1),
+          lt: new Date(currentYear, currentMonth, 1),
+        },
+      },
+    });
+
+    // Calculate percentage change
+    let percentageChange = 0;
+    if (subscribedLastMonth > 0) {
+      percentageChange = ((subscribedThisMonth - subscribedLastMonth) / subscribedLastMonth) * 100;
+    }
+
+    return {
+      totalUsuarios,
+      usuariosActivos,
+      usuariosInActivos,
+      subscriptions: {
+        currentMonth: {
+          month: currentMonth + 1,
+          count: subscribedThisMonth
+        },
+        previousMonth: {
+          month: currentMonth,
+          count: subscribedLastMonth
+        },
+        percentageChange: parseFloat(percentageChange.toFixed(2))
+      }
+    };
+  } catch (error) {
+    this.logger.error(`Error getting user stats: ${error.message}`);
+    throw new Error('Error getting user stats');
+  }
+}
 
 }
