@@ -292,4 +292,53 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error fetching sales stats');
     }
   }
+  async getTendenciaVentas() {
+    try {
+      // Obtener fecha actual y fecha hace 12 meses
+      const currentDate = new Date();
+      const startDate = new Date(currentDate);
+      startDate.setMonth(startDate.getMonth() - 11); // Retroceder 11 meses para obtener 12 meses completos
+  
+      const ventasPorMes = await this.order.groupBy({
+        by: ['createdAt'],
+        where: {
+          isAvailable: true,
+          createdAt: {
+            gte: startDate,
+            lte: currentDate,
+          },
+        },
+        _sum: {
+          totalAmount: true,
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
+  
+      // Formatear los resultados para que incluyan todos los meses
+      const resultados = [];
+      const currentMonth = currentDate.getMonth();
+      
+      for (let i = 0; i < 12; i++) {
+        const monthDate = new Date(startDate);
+        monthDate.setMonth(startDate.getMonth() + i);
+        
+        const ventas = ventasPorMes.find(v => 
+          new Date(v.createdAt).getMonth() === monthDate.getMonth() &&
+          new Date(v.createdAt).getFullYear() === monthDate.getFullYear()
+        );
+  
+        resultados.push({
+          mes: monthDate,
+          ingresos: ventas?._sum.totalAmount || 0,
+        });
+      }
+  
+      return resultados;
+    } catch (error) {
+      this.logger.error(`Error obteniendo tendencia de ventas: ${error.message}`, error.stack);
+      throw new Error('Error obteniendo tendencia de ventas');
+    }
+  }
 }
