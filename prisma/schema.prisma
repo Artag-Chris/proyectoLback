@@ -21,6 +21,9 @@ model User {
   isAvailable  Boolean  @default(true)  // Campo para soft delete
   isAdmin      Boolean  @default(false) // Campo para definir si es administrador
   orders       Order[]
+  //totalSpent nuevo campo para traquear todo el gasto que ha tenido el cliente
+  //previusPurchase nuevo campo para mirar tendencias de compra
+  //lastPurchaseDate campo nuevo para calcular la frecuencia de las compras
 }
 
 
@@ -65,6 +68,7 @@ model Order {
   isAvailable   Boolean       @default(true)  // Campo para soft delete
   orderItems    OrderItem[]
   transactions  Transaction[]
+  //status nuevo campo para manejar directamente el status de la compra
 }
 
 model OrderItem {

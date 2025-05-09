@@ -35,6 +35,13 @@ async getVentasStats() {
     },
     data: statsData
   };
+}   @Get('/ventasRecientes')
+async getRecentSales() {
+  const sales = await this.pedidosService.getRecentSales();
+  return {
+    message: "Recent sales retrieved successfully",
+    data: sales
+  };
 }
 
   @Get('/:id')
@@ -56,5 +63,6 @@ async getVentasStats() {
     const pedido = await this.pedidosService.updatePedido(parsedId, createPedidoDto);
     return pedido;
   }
+
  
 }

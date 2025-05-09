@@ -341,4 +341,70 @@ export class PedidosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error obteniendo tendencia de ventas');
     }
   }
+  async getRecentSales() {
+    try {
+      const recentOrders = await this.order.findMany({
+        where: {
+          isAvailable: true,
+        },
+        take: 5,
+        orderBy: {
+          createdAt: 'desc'
+        },
+        include: {
+          user: {
+            select: {
+              email: true,
+              firstName: true,
+              lastName: true,
+              profileImage: true,
+            }
+          },
+          transactions: {
+            where: {
+              isAvailable: true
+            }
+          },
+          orderItems: {
+            include: {
+              product: true
+            }
+          }
+        }
+      });
+  
+      // Formatear los datos según los requerimientos del componente
+      const formattedSales = recentOrders.map(order => {
+        // Calcular el estado basado en las transacciones
+        const status = order.transactions.length > 0 ? 'completed' : 'pending';
+        
+        // Determinar si es VIP basado en el monto total
+        const isVip = order.totalAmount > 1000;
+        
+        // Simular tendencia (esto debería basarse en datos reales en el futuro)
+        const trend = order.totalAmount > 500 ? 'up' : 'down';
+  
+        return {
+          id: order.id,
+          name: `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim(),
+          email: order.user.email,
+          amount: new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN'
+          }).format(order.totalAmount),
+          amountValue: order.totalAmount,
+          status,
+          date: order.createdAt.toISOString(),
+          avatar: order.user.profileImage,
+          isVip,
+          trend
+        };
+      });
+  
+      return formattedSales;
+    } catch (error) {
+      this.logger.error(`Error fetching recent sales: ${error.message}`);
+      throw new Error('Error fetching recent sales');
+    }
+  }
 }
