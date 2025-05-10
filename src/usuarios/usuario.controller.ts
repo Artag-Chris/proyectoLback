@@ -2,6 +2,7 @@ import { Body, Controller, Get, Logger, Param, Post, Put, ValidationPipe,UsePipe
 import { UsuariosService } from "./usuarios.service";
 import { CreateUsuarioAdminDto } from "./dto/createUserInAdmin";
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateUserFromAdminDto } from "./dto/updateUserFromAdmin.dto";
 
 
 @Controller('usuarios')
@@ -50,7 +51,7 @@ export class UsuariosController {
     updateUsuario(
         @Param('email') email: string,
         @Body() data: any) {
-            console.log(data)
+          //  console.log(data)
         const respuesta = this.usuariosService.updateUsuario(email, data);
         return respuesta;
     }
@@ -89,6 +90,14 @@ export class UsuariosController {
       @UploadedFile() profileImage?: Express.Multer.File
     ) {
       return this.usuariosService.createUsuarioInAdmin(data, profileImage);
+    }
+    @Put('/admin/userInADmin/:id')
+    updateUsuarioInAdmin(
+        @Param('id') id: string,
+        @Body() data: UpdateUserFromAdminDto) {
+            const numericId = parseInt(id, 10);
+        const respuesta = this.usuariosService.updateUsuarioInAdmin(numericId, data);
+        return respuesta;
     }
 }
 

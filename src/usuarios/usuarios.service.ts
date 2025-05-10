@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleInit, Param, Post } from "@nestjs/common";
 import { PrismaClient } from '@prisma/client';
+import { UpdateUserFromAdminDto } from "./dto/updateUserFromAdmin.dto";
 
 @Injectable()
 export class UsuariosService extends PrismaClient implements OnModuleInit {
@@ -89,6 +90,37 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
     }
       
   }
+
+  async updateUsuarioInAdmin(id: number, data: UpdateUserFromAdminDto) {
+    
+    try {
+      const usuario = await this.user.findUnique({ where: { id } });
+      if (usuario) {
+        const updatedUsuario = await this.user.update({
+          where: { id: usuario.id },
+          data: {
+            phoneNumber: data.phoneNumber,
+            address  :data.address,
+            firstName: data.firstName ,
+            lastName: data.lastName ,
+            email:data.email,
+            isAvailable: data.isAvailable || true,
+            isAdmin:data.isAdmin,
+            profileImage:data.profileImage
+          }
+        });
+        console.log(updatedUsuario)
+        return updatedUsuario;
+      } else {
+        return "El Usuario no existe";
+      }
+    } catch (error) {
+      console.error(`Error updating user: ${error.message}`);
+      throw new Error('Error updating user');
+    }
+      
+  }
+
 
   async deleteUsuario(phoneNumber: string) {
     try {
