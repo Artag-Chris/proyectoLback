@@ -254,7 +254,6 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
   }
  }
  async createUsuarioInAdmin(data: any , profileImage?: Express.Multer.File) {
-
   
   try {
     const existeEmail: any = await this.user.findUnique(
