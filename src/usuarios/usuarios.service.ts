@@ -89,7 +89,7 @@ export class UsuariosService extends PrismaClient implements OnModuleInit {
       throw new Error('Error updating user');
     }
       
-  }
+  } 
 
   async updateUsuarioInAdmin(id: number, data: UpdateUserFromAdminDto) {
     
